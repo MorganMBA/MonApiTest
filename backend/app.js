@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const Product = require('./model/product');
+const productRoutes = require('./routes/product');
 
     mongoose.connect('mongodb+srv://morganMba:@rafaT2000@cluster0-21dbt.mongodb.net/test?retryWrites=true&w=majority',
         { useNewUrlParser: true,
@@ -19,38 +19,7 @@ const Product = require('./model/product');
         res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
         next();
     });
-  
-    app.post('/api/products', (req, res, next) => {
-        const product = new Product({
-            ...req.body
-        });
-        product.save()
-        .then( product => res.status(201).json({ product }))
-        .catch( error => res.status(400).json({ error }));
-    });
-
-    app.get('/api/products', (req, res, next) => {
-        Product.find()
-        .then( products => res.status(200).json({ products }))
-        .catch(error => res.status(400).json({ error }));
-    });
-
-    app.get('/api/products/:id', (req, res, next) => {
-        Product.findOne({ _id: req.params.id})
-        .then( product => res.status(200).json({ product }))
-        .catch( error => res.status(400).json({ error }));
-    })
-
-    app.put('/api/products/:id', (req, res, next) => {
-        Product.updateOne({ _id: req.params.id}, { ...req.body, _id: req.params.id})
-        .then(() => res.status(200).json({ message: 'Modified!'}))
-        .catch(error => res.status(400).json({ error }));
-    });
-
-    app.delete('/api/products/:id', (req, res, next) => {
-        Product.deleteOne({ _id: req.params.id })
-        .then(() => res.status(200).json({ message: 'Deleted!'}))
-        .catch(error => res.status(400).json({ error }));
-    });
+    
+    app.use('/api/products', productRoutes);
 
 module.exports = app;
